@@ -1031,9 +1031,125 @@
     renderAuditTable();
   }
 
+  // Global select and inspect helper
+  window.selectAndInspect = function (key) {
+    window.switchTab('inbox');
+    selectRecord(key);
+  };
+
+  // Command Palette (⌘K) Controller
+  window.openCmdPalette = function () {
+    const backdrop = document.getElementById('cmd-palette-backdrop');
+    const input = document.getElementById('cmd-palette-input');
+    if (backdrop) backdrop.classList.add('open');
+    if (input) {
+      input.value = '';
+      input.focus();
+      renderCmdPalette('');
+    }
+  };
+
+  window.closeCmdPalette = function () {
+    const backdrop = document.getElementById('cmd-palette-backdrop');
+    if (backdrop) backdrop.classList.remove('open');
+  };
+
+  window.handleCmdBackdropClick = function (e) {
+    if (e.target && e.target.id === 'cmd-palette-backdrop') {
+      window.closeCmdPalette();
+    }
+  };
+
+  function renderCmdPalette(query) {
+    const container = document.getElementById('cmd-palette-results');
+    if (!container) return;
+    const q = (query || '').toLowerCase().trim();
+    const records = Array.from(state.records.values());
+
+    const quickActions = [
+      { name: 'Switch to Executive Telemetry Dashboard', tab: 'dashboard', icon: '📊' },
+      { name: 'Switch to Records & Traces Inspector', tab: 'inbox', icon: '⚡' },
+      { name: 'Switch to Executive Daily Brief', tab: 'brief', icon: '📋' },
+      { name: 'Open Replay CI/CD Verification Bench', tab: 'replay', icon: '🧪' },
+      { name: 'Download Complete Export PKZIP Archive', action: 'export', icon: '💾' },
+      { name: 'Toggle Developer Dark / Light Mode', action: 'theme', icon: '🌓' },
+      { name: 'Run Shuffled Deduplication Replay Test', action: 'replay_dedup', icon: '🔄' },
+      { name: 'Apply M07 Route Override (Step 3)', action: 'replay_override', icon: '⚖️' },
+      { name: 'Apply 02_update.json Delta Patch (Step 4)', action: 'replay_update', icon: '📦' }
+    ];
+
+    const matchedActions = quickActions.filter(a => !q || a.name.toLowerCase().includes(q));
+
+    const matchedRecords = records.filter(r => {
+      if (!q) return true;
+      const ref = (r.record_ref || '').toLowerCase();
+      const title = (r.payload && r.payload.title || '').toLowerCase();
+      const rep = (r.payload && (r.payload.rep_name || r.payload.organizer_email) || '').toLowerCase();
+      const route = getRecordRoute(recordKey(r.source_type, r.source_id)).toLowerCase();
+      return ref.includes(q) || title.includes(q) || rep.includes(q) || route.includes(q);
+    }).slice(0, 10);
+
+    let html = '';
+
+    if (matchedActions.length > 0) {
+      html += '<div class="cmd-group-title">Command Actions</div>';
+      matchedActions.forEach(act => {
+        html += `
+          <div class="cmd-item" onclick="window.executeCmdAction('${act.tab || ''}', '${act.action || ''}')">
+            <div class="cmd-item-left">
+              <span>${act.icon}</span>
+              <span>${act.name}</span>
+            </div>
+            <span class="cmd-item-action">EXECUTE ↵</span>
+          </div>
+        `;
+      });
+    }
+
+    if (matchedRecords.length > 0) {
+      html += '<div class="cmd-group-title" style="margin-top:8px;">Entities &amp; Traces</div>';
+      matchedRecords.forEach(rec => {
+        const key = recordKey(rec.source_type, rec.source_id);
+        const ref = rec.record_ref || rec.source_id.slice(0, 6);
+        const title = (rec.payload && rec.payload.title) || (rec.source_type === 'call' ? 'Call with Lead' : 'Meeting');
+        const route = getRecordRoute(key);
+        html += `
+          <div class="cmd-item" onclick="window.selectFromCmd('${key}')">
+            <div class="cmd-item-left">
+              <span class="cmd-item-ref">${ref}</span>
+              <span style="font-weight:500;">${escapeHtml(title)}</span>
+            </div>
+            <span class="route-badge route-${route}" style="font-size:10px;">${route.replace('_', ' ')}</span>
+          </div>
+        `;
+      });
+    }
+
+    if (matchedActions.length === 0 && matchedRecords.length === 0) {
+      html = '<div style="padding:24px; text-align:center; color:var(--text-dim); font-size:13px; font-family:var(--font-mono);">No matching records or actions found</div>';
+    }
+
+    container.innerHTML = html;
+  }
+
+  window.executeCmdAction = function (tab, action) {
+    window.closeCmdPalette();
+    if (tab) window.switchTab(tab);
+    else if (action === 'export') window.downloadExportZip();
+    else if (action === 'theme') window.toggleTheme();
+    else if (action === 'replay_dedup') window.runReplayStep(2);
+    else if (action === 'replay_override') window.runReplayStep(3);
+    else if (action === 'replay_update') window.runReplayStep(4);
+  };
+
+  window.selectFromCmd = function (key) {
+    window.closeCmdPalette();
+    window.selectAndInspect(key);
+  };
+
   // Initialization
   window.addEventListener('DOMContentLoaded', () => {
-    // Restore Theme (Default to clean light theme)
+    // Restore Theme (Default to clean, user-friendly light theme)
     const savedTheme = storage.get('spendnest_theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
@@ -1049,8 +1165,51 @@
     if (briefEl && window.SPENDNEST_DATA && window.SPENDNEST_DATA.managerBriefMarkdown) {
       briefEl.innerHTML = renderMarkdown(window.SPENDNEST_DATA.managerBriefMarkdown);
     }
-    // Initialize Keyboard listener for Slides
+
+    // Global Developer Keyboard Navigation
     window.addEventListener('keydown', (e) => {
+      // Cmd+K or Ctrl+K for Command Palette
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const backdrop = document.getElementById('cmd-palette-backdrop');
+        if (backdrop && backdrop.classList.contains('open')) {
+          window.closeCmdPalette();
+        } else {
+          window.openCmdPalette();
+        }
+        return;
+      }
+
+      // Escape key closes modal
+      if (e.key === 'Escape') {
+        window.closeCmdPalette();
+        return;
+      }
+
+      // Check if user is typing inside an input element
+      const activeTag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+        return;
+      }
+
+      // 1-6 keys for fast tab switching
+      if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
+        const tabMap = {
+          '1': 'dashboard',
+          '2': 'inbox',
+          '3': 'brief',
+          '4': 'replay',
+          '5': 'export',
+          '6': 'slides'
+        };
+        if (tabMap[e.key]) {
+          e.preventDefault();
+          window.switchTab(tabMap[e.key]);
+          return;
+        }
+      }
+
+      // Arrow keys for slides when on slides tab
       if (state.activeTab === 'slides') {
         if (e.key === 'ArrowRight' || e.key === 'Space') navigateSlide(1);
         else if (e.key === 'ArrowLeft') navigateSlide(-1);
@@ -1089,6 +1248,14 @@
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', renderInbox);
     });
+
+    // Command palette live input listener
+    const cmdInput = document.getElementById('cmd-palette-input');
+    if (cmdInput) {
+      cmdInput.addEventListener('input', (e) => {
+        renderCmdPalette(e.target.value);
+      });
+    }
 
     renderAll();
   });

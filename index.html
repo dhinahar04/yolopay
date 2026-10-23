@@ -4,25 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SpendNest — Revenue Intelligence Inbox</title>
-  <meta name="description" content="Lightweight executive workspace transforming fragmented calls, meeting transcripts, and automated notes into actionable revenue intelligence.">
+  <meta name="description" content="Clean, user-friendly revenue intelligence workspace transforming fragmented calls, meeting transcripts, and notes into actionable insights.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text y='70' x='20' font-size='60' fill='white' font-weight='bold'>S</text></svg>">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Top Navigation & Brand Header -->
+  <!-- Top Navigation Header -->
   <header class="app-header">
     <div class="header-top">
+      
+      <!-- Brand Section -->
       <div class="brand-section">
-        <div class="brand-logo">S</div>
+        <div class="brand-logo" title="SpendNest Revenue Intelligence">S</div>
         <div class="brand-title">
           SpendNest
           <span class="brand-tag">Revenue Intelligence</span>
         </div>
       </div>
 
-      <!-- Main Navigation Tabs in Header -->
-      <nav class="app-nav">
+      <!-- Main Navigation Tabs -->
+      <nav class="app-nav" aria-label="Main Navigation">
         <button class="nav-tab active" id="tab-btn-dashboard" data-tab="dashboard" onclick="window.switchTab('dashboard')">
           📊 Dashboard
         </button>
@@ -33,16 +40,17 @@
           📋 Manager Brief
         </button>
         <button class="nav-tab" id="tab-btn-replay" data-tab="replay" onclick="window.switchTab('replay')">
-          🔄 Replay Suite
+          🔄 Replay Tests
         </button>
         <button class="nav-tab" id="tab-btn-export" data-tab="export" onclick="window.switchTab('export')">
           💾 Exports
         </button>
         <button class="nav-tab" id="tab-btn-slides" data-tab="slides" onclick="window.switchTab('slides')">
-          📽️ 5 Slides
+          📽️ Presentation
         </button>
       </nav>
 
+      <!-- Action Buttons -->
       <div class="header-actions">
         <button class="btn btn-primary btn-sm" onclick="window.downloadExportZip()" title="Download complete organized export bundle">
           💾 Export ZIP
@@ -54,34 +62,35 @@
           🌓
         </button>
       </div>
+
     </div>
 
-    <!-- Contract Replay Interactive Sub-bar -->
+    <!-- Replay Test Quickbar -->
     <div class="replay-quickbar">
       <div class="replay-step-btns">
         <span class="replay-step-label">Replay Tests:</span>
-        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(1)" title="Load 01_initial.json">
-          1. Initial (v1)
+        <button class="step-btn" onclick="window.runReplayStep(1)" title="Load 01_initial.json">
+          1. Load Initial (v1)
         </button>
-        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(2)" title="Repeat import in shuffled order">
-          2. Dedup Check
+        <button class="step-btn" onclick="window.runReplayStep(2)" title="Repeat import in shuffled order to verify 0 duplicates">
+          2. Check Duplicates
         </button>
-        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(3)" title="Change M07 route to test judgment preservation">
+        <button class="step-btn" onclick="window.runReplayStep(3)" title="Change M07 route to test judgment preservation">
           3. Override Route (M07)
         </button>
-        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(4)" title="Apply 02_update.json late transcript">
+        <button class="step-btn" onclick="window.runReplayStep(4)" title="Apply 02_update.json late transcript">
           4. Update Batch (v2)
         </button>
-        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(5)" title="Simulate reload to verify persistence">
+        <button class="step-btn" onclick="window.runReplayStep(5)" title="Simulate reload to verify persistence">
           5. Verify State
         </button>
-        <button class="btn btn-secondary btn-sm" style="color:var(--accent-rose);" onclick="window.runReplayStep(0)" title="Reset to clean start">
-          Reset
+        <button class="step-btn reset-btn" onclick="window.runReplayStep(0)" title="Reset to clean start">
+          ↺ Reset
         </button>
       </div>
       <div class="replay-indicator">
         <span>Batch: <strong id="quickbar-batch">01_initial.json (Rev 1)</strong></span>
-        <span>Invariant: <strong style="color:var(--accent-emerald);">44 Records · Valid</strong></span>
+        <span class="verified-badge">✓ 44 Records · Valid</span>
       </div>
     </div>
   </header>
@@ -89,14 +98,32 @@
   <!-- Main Container -->
   <main class="app-main">
 
-    <!-- TAB 1: EXECUTIVE DASHBOARD -->
+    <!-- ======================================================================
+         TAB 1: EXECUTIVE DASHBOARD
+         ====================================================================== -->
     <section id="tab-dashboard" class="tab-pane active">
-      <!-- KPI Metric Cards Grid -->
+      
+      <div class="dashboard-header-strip">
+        <div>
+          <h1>Executive Revenue Intelligence Dashboard</h1>
+          <p>Activity overview for 21 August 2026 (Asia/Kolkata) across calls and meetings</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="window.switchTab('inbox')">
+            Browse All Records →
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="window.downloadExportZip()">
+            Download Exports
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards Grid -->
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-card-header">
-            <span class="kpi-title">Selected Activity</span>
-            <div class="kpi-icon">📋</div>
+            <span class="kpi-title">Total Interactions</span>
+            <span class="kpi-icon">📋</span>
           </div>
           <div class="kpi-value" id="kpi-total-records">44</div>
           <div class="kpi-subtext" id="kpi-total-records-sub"><strong>30</strong> Calls · <strong>14</strong> Meetings</div>
@@ -105,7 +132,7 @@
         <div class="kpi-card">
           <div class="kpi-card-header">
             <span class="kpi-title">Transcript Coverage</span>
-            <div class="kpi-icon">🎙️</div>
+            <span class="kpi-icon">🎙️</span>
           </div>
           <div class="kpi-value" id="kpi-coverage">38.6%</div>
           <div class="kpi-subtext" id="kpi-coverage-sub"><strong>17/44</strong> usable (10/30 calls, 7/14 mtgs)</div>
@@ -113,8 +140,8 @@
 
         <div class="kpi-card">
           <div class="kpi-card-header">
-            <span class="kpi-title">Source Reported Connect Rate</span>
-            <div class="kpi-icon">📞</div>
+            <span class="kpi-title">Telephony Connect Rate</span>
+            <span class="kpi-icon">📞</span>
           </div>
           <div class="kpi-value" id="kpi-connect-rate">36.7%</div>
           <div class="kpi-subtext" id="kpi-connect-rate-sub">Source reported: <strong>11/30</strong> (Verified: 10/10)</div>
@@ -122,25 +149,52 @@
 
         <div class="kpi-card">
           <div class="kpi-card-header">
-            <span class="kpi-title">Manual Route Decisions</span>
-            <div class="kpi-icon">⚖️</div>
+            <span class="kpi-title">Manual Route Overrides</span>
+            <span class="kpi-icon">⚖️</span>
           </div>
           <div class="kpi-value" id="kpi-overrides">0</div>
           <div class="kpi-subtext" id="kpi-overrides-sub">All routes match automated policy</div>
         </div>
       </div>
 
-      <!-- Critical Findings Alert Banner -->
-      <div class="alert-banner">
-        <div class="alert-banner-icon">⚠️</div>
-        <div class="alert-banner-content">
-          <h4>Data Integrity &amp; Exception Notice (21 August 2026 Asia/Kolkata)</h4>
-          <p>
-            Three critical discrepancies require manager vigilance:
-            <strong>1) Identity Mismatch:</strong> Call C06 metadata lists rep "Meera", but speaker explicitly identifies as "Ravi".
-            <strong>2) Inverted Connection Labels:</strong> Call C04 is marked <code>is_connected=false</code> despite delivering a substantive 95s voicemail; B11 &amp; B14 are marked <code>is_connected=true</code> with zero dialogue.
-            <strong>3) Non-Sales Commercial Classification:</strong> Meeting M02 (*LedgerBridge*) is an internal e-invoicing vendor evaluation; M10 is internal staff training. Neither belongs in sales pipeline.
-          </p>
+      <!-- Clear & Friendly Insights Card -->
+      <div class="insights-card">
+        <div class="insights-header">
+          <span style="font-size:18px;">💡</span>
+          <h3>Key Manager Insights &amp; Data Corrections (21 August 2026)</h3>
+        </div>
+        <div class="insights-list">
+          
+          <div class="insight-item">
+            <span class="insight-badge amber">Identity Correction</span>
+            <div style="flex:1;">
+              <strong>Call C06 Rep Attribution:</strong> Metadata records rep as <em>"Meera"</em>, but caller introduces himself as <em>"Ravi here. I'll say at the start that this is a cold call."</em> Corrected to <strong>Meera (Spoken: Ravi)</strong> so coaching and bonuses aren't misattributed.
+            </div>
+            <button class="insight-btn" onclick="window.selectAndInspect('call:c8b417c4-bb28-56e6-95fb-687f8f9ea22e')">
+              Inspect C06 →
+            </button>
+          </div>
+
+          <div class="insight-item">
+            <span class="insight-badge blue">Dialer Tag Correction</span>
+            <div style="flex:1;">
+              <strong>Call C04 Voicemail:</strong> Marked <em>is_connected=false</em> by dialer, yet rep Arun delivered a substantive 95-second voicemail to Lanternpath Media. Rescued into <strong>Lead Nurture</strong>. Conversely, B11 &amp; B14 marked <em>is_connected=true</em> had zero dialogue.
+            </div>
+            <button class="insight-btn" onclick="window.selectAndInspect('call:d643a593-ba8a-592b-be24-74ea02047a07')">
+              Inspect C04 →
+            </button>
+          </div>
+
+          <div class="insight-item">
+            <span class="insight-badge purple">Commercial Classification</span>
+            <div style="flex:1;">
+              <strong>Meeting M02 Vendor Evaluation:</strong> Titled <em>"LedgerBridge / SpendNest discussion"</em>. SpendNest is evaluating LedgerBridge as an e-invoicing software vendor. Correctly routed to <strong>Internal &amp; Vendor Ops</strong> to prevent false pipeline inflation.
+            </div>
+            <button class="insight-btn" onclick="window.selectAndInspect('meeting:64917a86-7a89-563b-9e45-1c8a67eb17c6')">
+              Inspect M02 →
+            </button>
+          </div>
+
         </div>
       </div>
 
@@ -153,6 +207,7 @@
               <h3>Routing Taxonomy Distribution</h3>
               <div class="card-subtitle">Active category assignments across 44 selected records</div>
             </div>
+            <span class="tag-pill">6 Routes</span>
           </div>
           <div id="route-breakdown-bars"></div>
         </div>
@@ -164,6 +219,7 @@
               <h3>Activity by Person &amp; Role</h3>
               <div class="card-subtitle">Strict separation of Call Representatives from Meeting Organizers</div>
             </div>
+            <span class="tag-pill">Audited</span>
           </div>
           <div style="overflow-x:auto;">
             <table class="data-table">
@@ -184,7 +240,9 @@
       </div>
     </section>
 
-    <!-- TAB 2: INBOX & DEEP INSPECTOR -->
+    <!-- ======================================================================
+         TAB 2: INBOX & DEEP INSPECTOR
+         ====================================================================== -->
     <section id="tab-inbox" class="tab-pane">
       <div class="inbox-container">
         <!-- Left: Master Record List -->
@@ -222,7 +280,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:11.5px; color:var(--text-dim);">
               <span>Showing: <strong id="inbox-filtered-count">44 of 44</strong></span>
-              <span>Sorted by Logical Reference</span>
+              <span>Sorted by Reference</span>
             </div>
           </div>
 
@@ -234,7 +292,7 @@
           <div class="detail-header">
             <div class="detail-title-row">
               <div>
-                <h2 id="detail-title" class="detail-title">Select an interaction</h2>
+                <h2 id="detail-title" class="detail-title">Select an interaction from the left</h2>
                 <div style="margin-top:6px; display:flex; gap:8px; align-items:center;">
                   <span id="detail-route-badge" class="route-badge route-sales_pipeline">Sales Pipeline</span>
                   <span class="tag-pill" id="detail-freshness-pill">Current Revision</span>
@@ -286,13 +344,13 @@
           <!-- Detail Navigation Sub-tabs -->
           <div class="detail-nav">
             <div class="detail-tab active" data-detail-tab="analysis" onclick="window.switchDetailTab('analysis')">
-              🧠 Intelligence &amp; Analysis
+              🧠 Intelligence Summary
             </div>
             <div class="detail-tab" data-detail-tab="transcript" onclick="window.switchDetailTab('transcript')">
-              📜 Full Transcript
+              💬 Full Transcript
             </div>
             <div class="detail-tab" data-detail-tab="raw" onclick="window.switchDetailTab('raw')">
-              ⚙️ Raw Source Payload
+              ⚙️ Raw Data
             </div>
           </div>
 
@@ -306,26 +364,30 @@
       </div>
     </section>
 
-    <!-- TAB 3: MANAGER DAILY BRIEF -->
+    <!-- ======================================================================
+         TAB 3: MANAGER DAILY BRIEF
+         ====================================================================== -->
     <section id="tab-brief" class="tab-pane">
       <div class="brief-container" id="brief-content"></div>
     </section>
 
-    <!-- TAB 4: REPLAY SUITE & AUDIT -->
+    <!-- ======================================================================
+         TAB 4: REPLAY SUITE & AUDIT
+         ====================================================================== -->
     <section id="tab-replay" class="tab-pane">
       <div style="max-width:1100px; margin:0 auto;">
         <div class="card" style="margin-bottom:24px;">
           <div class="card-header">
             <div>
               <h3>Data Contract Replay Verification Bench</h3>
-              <div class="card-subtitle">Formal behavioral verification of import, deduplication, revision ordering, and judgment preservation rules</div>
+              <div class="card-subtitle">Formal verification of import, deduplication, revision ordering, and judgment preservation rules</div>
             </div>
             <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(0)">
               Clean Reset Slate
             </button>
           </div>
 
-          <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:18px;">
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">
             The table below verifies the invariants defined in <code>DATA_CONTRACT.md</code> across delivery batches:
           </p>
 
@@ -347,32 +409,32 @@
             <h3>Interactive Replay Step Walkthrough</h3>
           </div>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
-            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
-              <strong style="color:var(--accent-primary);">Step 1: Initial Import</strong>
+            <div style="padding:14px; background:var(--bg-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+              <strong style="color:var(--primary);">Step 1: Initial Import</strong>
               <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Loads <code>01_initial.json</code>. Yields exactly 44 records and 17 usable transcripts.</p>
               <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(1)" style="width:100%;">Execute Step 1</button>
             </div>
 
-            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
-              <strong style="color:var(--accent-cyan);">Step 2: Re-import Batch</strong>
-              <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Re-imports the initial batch with shuffled record ordering. Validates 0 duplicates.</p>
+            <div style="padding:14px; background:var(--bg-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+              <strong style="color:var(--cyan);">Step 2: Re-import Batch</strong>
+              <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Re-imports initial batch with shuffled sequence. Validates 0 duplicates.</p>
               <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(2)" style="width:100%;">Execute Step 2</button>
             </div>
 
-            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
-              <strong style="color:var(--accent-purple);">Step 3: Route Override</strong>
+            <div style="padding:14px; background:var(--bg-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+              <strong style="color:var(--purple);">Step 3: Route Override</strong>
               <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Manager overrides M07's route to Customer Success. Saves decision in state.</p>
               <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(3)" style="width:100%;">Execute Step 3</button>
             </div>
 
-            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
-              <strong style="color:var(--accent-amber);">Step 4: Update Batch</strong>
+            <div style="padding:14px; background:var(--bg-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+              <strong style="color:var(--amber);">Step 4: Update Batch</strong>
               <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Imports <code>02_update.json</code> (Rev 2). M07 receives 27 turns. Total usable: 18.</p>
               <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(4)" style="width:100%;">Execute Step 4</button>
             </div>
 
-            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
-              <strong style="color:var(--accent-emerald);">Step 5: Verify State</strong>
+            <div style="padding:14px; background:var(--bg-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-light);">
+              <strong style="color:var(--emerald);">Step 5: Verify State</strong>
               <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Simulates page refresh/restart. M07 manual route remains preserved!</p>
               <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(5)" style="width:100%;">Execute Step 5</button>
             </div>
@@ -381,7 +443,9 @@
       </div>
     </section>
 
-    <!-- TAB 5: EXPORT MANIFEST & FILES -->
+    <!-- ======================================================================
+         TAB 5: EXPORT MANIFEST & FILES
+         ====================================================================== -->
     <section id="tab-export" class="tab-pane">
       <div style="max-width:1100px; margin:0 auto;">
         <div class="card" style="margin-bottom:24px;">
@@ -397,7 +461,7 @@
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
             <div>
-              <h4 style="font-size:13px; text-transform:uppercase; color:var(--accent-cyan); margin-bottom:8px;">Folder &amp; File Hierarchy</h4>
+              <h4 style="font-size:13px; text-transform:uppercase; color:var(--primary); margin-bottom:8px;">Folder &amp; File Hierarchy</h4>
               <pre class="code-block" style="height:320px;">
 exports/
 ├── manifest.json
@@ -433,9 +497,9 @@ exports/
             </div>
 
             <div>
-              <h4 style="font-size:13px; text-transform:uppercase; color:var(--accent-cyan); margin-bottom:8px;">Manifest Preview (JSON &amp; CSV)</h4>
+              <h4 style="font-size:13px; text-transform:uppercase; color:var(--primary); margin-bottom:8px;">Manifest Preview (JSON &amp; CSV)</h4>
               <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
-                Identifies <code>(source_type, source_id)</code>, applied revision, routes, relative file paths, and override status:
+                Identifies <code>(source_type, source_id)</code>, applied revision, routes, and file paths:
               </div>
               <pre class="code-block" style="height:320px;">
 {
@@ -474,7 +538,9 @@ exports/
       </div>
     </section>
 
-    <!-- TAB 6: 5 PRESENTATION SLIDES -->
+    <!-- ======================================================================
+         TAB 6: 5 PRESENTATION SLIDES
+         ====================================================================== -->
     <section id="tab-slides" class="tab-pane">
       <div class="slides-wrapper">
         <div class="slide-viewport">
@@ -496,7 +562,7 @@ exports/
           </div>
         </div>
         <div style="margin-top:14px; text-align:center; font-size:12px; color:var(--text-dim);">
-          Tip: You can also use Left/Right Arrow keys on your keyboard to navigate slides.
+          Tip: You can use Left/Right Arrow keys on your keyboard to navigate slides.
         </div>
       </div>
     </section>
