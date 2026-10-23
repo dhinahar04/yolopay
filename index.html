@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpendNest — Revenue Intelligence Inbox</title>
+  <meta name="description" content="Lightweight executive workspace transforming fragmented calls, meeting transcripts, and automated notes into actionable revenue intelligence.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text y='70' x='20' font-size='60' fill='white' font-weight='bold'>S</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation & Brand Header -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-section">
+        <div class="brand-logo">S</div>
+        <div class="brand-title">
+          SpendNest
+          <span class="brand-tag">Revenue Intelligence</span>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs in Header -->
+      <nav class="app-nav">
+        <button class="nav-tab active" id="tab-btn-dashboard" data-tab="dashboard" onclick="window.switchTab('dashboard')">
+          📊 Dashboard
+        </button>
+        <button class="nav-tab" id="tab-btn-inbox" data-tab="inbox" onclick="window.switchTab('inbox')">
+          📥 Inbox &amp; Inspector
+        </button>
+        <button class="nav-tab" id="tab-btn-brief" data-tab="brief" onclick="window.switchTab('brief')">
+          📋 Manager Brief
+        </button>
+        <button class="nav-tab" id="tab-btn-replay" data-tab="replay" onclick="window.switchTab('replay')">
+          🔄 Replay Suite
+        </button>
+        <button class="nav-tab" id="tab-btn-export" data-tab="export" onclick="window.switchTab('export')">
+          💾 Exports
+        </button>
+        <button class="nav-tab" id="tab-btn-slides" data-tab="slides" onclick="window.switchTab('slides')">
+          📽️ 5 Slides
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn btn-primary btn-sm" onclick="window.downloadExportZip()" title="Download complete organized export bundle">
+          💾 Export ZIP
+        </button>
+        <a href="reader.html" class="btn btn-secondary btn-sm" target="_blank" title="View original candidate assignment reading pack">
+          📖 Reading Pack
+        </a>
+        <button class="btn-icon" onclick="window.toggleTheme()" title="Toggle Dark/Light theme" aria-label="Toggle Theme">
+          🌓
+        </button>
+      </div>
+    </div>
+
+    <!-- Contract Replay Interactive Sub-bar -->
+    <div class="replay-quickbar">
+      <div class="replay-step-btns">
+        <span class="replay-step-label">Replay Tests:</span>
+        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(1)" title="Load 01_initial.json">
+          1. Initial (v1)
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(2)" title="Repeat import in shuffled order">
+          2. Dedup Check
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(3)" title="Change M07 route to test judgment preservation">
+          3. Override Route (M07)
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(4)" title="Apply 02_update.json late transcript">
+          4. Update Batch (v2)
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(5)" title="Simulate reload to verify persistence">
+          5. Verify State
+        </button>
+        <button class="btn btn-secondary btn-sm" style="color:var(--accent-rose);" onclick="window.runReplayStep(0)" title="Reset to clean start">
+          Reset
+        </button>
+      </div>
+      <div class="replay-indicator">
+        <span>Batch: <strong id="quickbar-batch">01_initial.json (Rev 1)</strong></span>
+        <span>Invariant: <strong style="color:var(--accent-emerald);">44 Records · Valid</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-main">
+
+    <!-- TAB 1: EXECUTIVE DASHBOARD -->
+    <section id="tab-dashboard" class="tab-pane active">
+      <!-- KPI Metric Cards Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Selected Activity</span>
+            <div class="kpi-icon">📋</div>
+          </div>
+          <div class="kpi-value" id="kpi-total-records">44</div>
+          <div class="kpi-subtext" id="kpi-total-records-sub"><strong>30</strong> Calls · <strong>14</strong> Meetings</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Transcript Coverage</span>
+            <div class="kpi-icon">🎙️</div>
+          </div>
+          <div class="kpi-value" id="kpi-coverage">38.6%</div>
+          <div class="kpi-subtext" id="kpi-coverage-sub"><strong>17/44</strong> usable (10/30 calls, 7/14 mtgs)</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Source Reported Connect Rate</span>
+            <div class="kpi-icon">📞</div>
+          </div>
+          <div class="kpi-value" id="kpi-connect-rate">36.7%</div>
+          <div class="kpi-subtext" id="kpi-connect-rate-sub">Source reported: <strong>11/30</strong> (Verified: 10/10)</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title">Manual Route Decisions</span>
+            <div class="kpi-icon">⚖️</div>
+          </div>
+          <div class="kpi-value" id="kpi-overrides">0</div>
+          <div class="kpi-subtext" id="kpi-overrides-sub">All routes match automated policy</div>
+        </div>
+      </div>
+
+      <!-- Critical Findings Alert Banner -->
+      <div class="alert-banner">
+        <div class="alert-banner-icon">⚠️</div>
+        <div class="alert-banner-content">
+          <h4>Data Integrity &amp; Exception Notice (21 August 2026 Asia/Kolkata)</h4>
+          <p>
+            Three critical discrepancies require manager vigilance:
+            <strong>1) Identity Mismatch:</strong> Call C06 metadata lists rep "Meera", but speaker explicitly identifies as "Ravi".
+            <strong>2) Inverted Connection Labels:</strong> Call C04 is marked <code>is_connected=false</code> despite delivering a substantive 95s voicemail; B11 &amp; B14 are marked <code>is_connected=true</code> with zero dialogue.
+            <strong>3) Non-Sales Commercial Classification:</strong> Meeting M02 (*LedgerBridge*) is an internal e-invoicing vendor evaluation; M10 is internal staff training. Neither belongs in sales pipeline.
+          </p>
+        </div>
+      </div>
+
+      <!-- Charts & Comparative Matrix Grid -->
+      <div class="charts-grid">
+        <!-- Route Distribution -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Routing Taxonomy Distribution</h3>
+              <div class="card-subtitle">Active category assignments across 44 selected records</div>
+            </div>
+          </div>
+          <div id="route-breakdown-bars"></div>
+        </div>
+
+        <!-- Activity by Rep vs Organizer -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Activity by Person &amp; Role</h3>
+              <div class="card-subtitle">Strict separation of Call Representatives from Meeting Organizers</div>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Role</th>
+                  <th>Person Identifier</th>
+                  <th>Volume</th>
+                  <th>Transcript Coverage</th>
+                  <th>Duration / Talk</th>
+                  <th>Voicemails</th>
+                </tr>
+              </thead>
+              <tbody id="matrix-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: INBOX & DEEP INSPECTOR -->
+    <section id="tab-inbox" class="tab-pane">
+      <div class="inbox-container">
+        <!-- Left: Master Record List -->
+        <div class="inbox-master">
+          <div class="inbox-controls">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="inbox-search" class="search-input" placeholder="Search by ref, title, rep, quote, turn...">
+            </div>
+            <div class="filter-row">
+              <select id="filter-route" class="filter-select">
+                <option value="all">All Routes (6 Categories)</option>
+                <option value="sales_pipeline">Sales Pipeline</option>
+                <option value="partnerships_advisory">Partnerships &amp; Advisory</option>
+                <option value="customer_success">Customer Success</option>
+                <option value="internal_vendor">Internal &amp; Vendor Ops</option>
+                <option value="lead_nurture">Lead Nurture</option>
+                <option value="triage_inactive">Triage / Inactive</option>
+              </select>
+
+              <select id="filter-type" class="filter-select">
+                <option value="all">All Types</option>
+                <option value="call">Calls Only (30)</option>
+                <option value="meeting">Meetings Only (14)</option>
+              </select>
+            </div>
+            <div class="filter-row" style="margin-top:8px;">
+              <select id="filter-person" class="filter-select"></select>
+              <select id="filter-review" class="filter-select">
+                <option value="all">All States</option>
+                <option value="action_needed">Action Needed</option>
+                <option value="reviewed">Reviewed</option>
+                <option value="unusable">Silent / Unusable</option>
+              </select>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:11.5px; color:var(--text-dim);">
+              <span>Showing: <strong id="inbox-filtered-count">44 of 44</strong></span>
+              <span>Sorted by Logical Reference</span>
+            </div>
+          </div>
+
+          <ul id="inbox-record-list" class="inbox-list"></ul>
+        </div>
+
+        <!-- Right: Detail Inspector -->
+        <div class="inbox-detail">
+          <div class="detail-header">
+            <div class="detail-title-row">
+              <div>
+                <h2 id="detail-title" class="detail-title">Select an interaction</h2>
+                <div style="margin-top:6px; display:flex; gap:8px; align-items:center;">
+                  <span id="detail-route-badge" class="route-badge route-sales_pipeline">Sales Pipeline</span>
+                  <span class="tag-pill" id="detail-freshness-pill">Current Revision</span>
+                </div>
+              </div>
+              <div class="detail-actions">
+                <select id="route-override-select" class="filter-select" onchange="window.handleRouteOverride(this.value)">
+                  <option value="sales_pipeline">Sales Pipeline</option>
+                  <option value="partnerships_advisory">Partnerships &amp; Advisory</option>
+                  <option value="customer_success">Customer Success</option>
+                  <option value="internal_vendor">Internal &amp; Vendor Ops</option>
+                  <option value="lead_nurture">Lead Nurture</option>
+                  <option value="triage_inactive">Triage / Inactive</option>
+                </select>
+                <button id="reset-route-btn" class="btn btn-secondary btn-sm" onclick="window.resetRouteOverride()" style="display:none;" title="Reset route to automated suggestion">
+                  ↺ Reset
+                </button>
+              </div>
+            </div>
+
+            <div class="detail-meta-grid">
+              <div class="meta-field">
+                <strong>Record Ref</strong>
+                <span id="meta-ref">—</span>
+              </div>
+              <div class="meta-field">
+                <strong>Source &amp; Rev</strong>
+                <span id="meta-type">—</span>
+              </div>
+              <div class="meta-field">
+                <strong>Rep / Organizer</strong>
+                <span id="meta-rep">—</span>
+              </div>
+              <div class="meta-field">
+                <strong>Time (Kolkata)</strong>
+                <span id="meta-time">—</span>
+              </div>
+              <div class="meta-field">
+                <strong>Duration</strong>
+                <span id="meta-duration">—</span>
+              </div>
+              <div class="meta-field">
+                <strong>Upstream Status</strong>
+                <span id="meta-connected">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detail Navigation Sub-tabs -->
+          <div class="detail-nav">
+            <div class="detail-tab active" data-detail-tab="analysis" onclick="window.switchDetailTab('analysis')">
+              🧠 Intelligence &amp; Analysis
+            </div>
+            <div class="detail-tab" data-detail-tab="transcript" onclick="window.switchDetailTab('transcript')">
+              📜 Full Transcript
+            </div>
+            <div class="detail-tab" data-detail-tab="raw" onclick="window.switchDetailTab('raw')">
+              ⚙️ Raw Source Payload
+            </div>
+          </div>
+
+          <!-- Detail Body Panes -->
+          <div class="detail-body">
+            <div id="detail-tab-analysis" class="detail-pane" style="display:block;"></div>
+            <div id="detail-tab-transcript" class="detail-pane" style="display:none;"></div>
+            <div id="detail-tab-raw" class="detail-pane" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MANAGER DAILY BRIEF -->
+    <section id="tab-brief" class="tab-pane">
+      <div class="brief-container" id="brief-content"></div>
+    </section>
+
+    <!-- TAB 4: REPLAY SUITE & AUDIT -->
+    <section id="tab-replay" class="tab-pane">
+      <div style="max-width:1100px; margin:0 auto;">
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-header">
+            <div>
+              <h3>Data Contract Replay Verification Bench</h3>
+              <div class="card-subtitle">Formal behavioral verification of import, deduplication, revision ordering, and judgment preservation rules</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="window.runReplayStep(0)">
+              Clean Reset Slate
+            </button>
+          </div>
+
+          <p style="font-size:13.5px; color:var(--text-muted); margin-bottom:18px;">
+            The table below verifies the invariants defined in <code>DATA_CONTRACT.md</code> across delivery batches:
+          </p>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Test Invariant</th>
+                <th>Contract Specification</th>
+                <th>Observed Application State</th>
+                <th>Verification</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Interactive Replay Step Walkthrough</h3>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              <strong style="color:var(--accent-primary);">Step 1: Initial Import</strong>
+              <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Loads <code>01_initial.json</code>. Yields exactly 44 records and 17 usable transcripts.</p>
+              <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(1)" style="width:100%;">Execute Step 1</button>
+            </div>
+
+            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              <strong style="color:var(--accent-cyan);">Step 2: Re-import Batch</strong>
+              <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Re-imports the initial batch with shuffled record ordering. Validates 0 duplicates.</p>
+              <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(2)" style="width:100%;">Execute Step 2</button>
+            </div>
+
+            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              <strong style="color:var(--accent-purple);">Step 3: Route Override</strong>
+              <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Manager overrides M07's route to Customer Success. Saves decision in state.</p>
+              <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(3)" style="width:100%;">Execute Step 3</button>
+            </div>
+
+            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              <strong style="color:var(--accent-amber);">Step 4: Update Batch</strong>
+              <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Imports <code>02_update.json</code> (Rev 2). M07 receives 27 turns. Total usable: 18.</p>
+              <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(4)" style="width:100%;">Execute Step 4</button>
+            </div>
+
+            <div style="padding:14px; background:var(--bg-surface); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+              <strong style="color:var(--accent-emerald);">Step 5: Verify State</strong>
+              <p style="font-size:12px; color:var(--text-muted); margin:6px 0 10px;">Simulates page refresh/restart. M07 manual route remains preserved!</p>
+              <button class="btn btn-primary btn-sm" onclick="window.runReplayStep(5)" style="width:100%;">Execute Step 5</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: EXPORT MANIFEST & FILES -->
+    <section id="tab-export" class="tab-pane">
+      <div style="max-width:1100px; margin:0 auto;">
+        <div class="card" style="margin-bottom:24px;">
+          <div class="card-header">
+            <div>
+              <h3>Generated Output Files &amp; Export Archive</h3>
+              <div class="card-subtitle">Deterministic, structured outputs with machine-readable manifests</div>
+            </div>
+            <button class="btn btn-primary" onclick="window.downloadExportZip()">
+              💾 Download Complete Export ZIP
+            </button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div>
+              <h4 style="font-size:13px; text-transform:uppercase; color:var(--accent-cyan); margin-bottom:8px;">Folder &amp; File Hierarchy</h4>
+              <pre class="code-block" style="height:320px;">
+exports/
+├── manifest.json
+├── manifest.csv
+├── manager_brief_2026-08-21.md
+├── sales_pipeline/
+│   ├── C03_developer_api_&_webhook_follow_up.md
+│   ├── M03_asterloom_systems_corporate_cards_&.md
+│   └── M06_mapletrail_services_branch_expense_.md
+├── partnerships_advisory/
+│   ├── C07_willowbank_advisory_channel_partner.md
+│   └── M01_harborpath_advisory___spendnest_dis.md
+├── customer_success/
+│   ├── M04_cedarwave_distribution_card_migrati.md
+│   ├── M07_willowfield_trust_bug_triage_(late_.md
+│   └── M09_brookmint_holdings_account_setup_&_.md
+├── internal_vendor/
+│   ├── M02_ledgerbridge___spendnest_technical_.md
+│   └── M10_internal_billing_workflow_&_unfreez.md
+├── lead_nurture/
+│   ├── C04_lanternpath_media_voicemail.md
+│   ├── C05_multi_store_retail_pitch_(storeharb.md
+│   ├── C08_people_ops_referral_outreach.md
+│   ├── C09_130_location_retail_referral_to_bus.md
+│   └── C10_manufacturing_lead___ex_meadowbrick.md
+└── triage_inactive/
+    ├── C01_harborlight_advisory_outreach.md
+    ├── C02_fernhaven_group_reception_transfer.md
+    ├── C06_120+_store_retail_outreach_(identit.md
+    ├── background_calls_B01_B20.md
+    └── silent_cancelled_meetings_M05_M08_M11_M12_M13_M14.md
+              </pre>
+            </div>
+
+            <div>
+              <h4 style="font-size:13px; text-transform:uppercase; color:var(--accent-cyan); margin-bottom:8px;">Manifest Preview (JSON &amp; CSV)</h4>
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">
+                Identifies <code>(source_type, source_id)</code>, applied revision, routes, relative file paths, and override status:
+              </div>
+              <pre class="code-block" style="height:320px;">
+{
+  "manifest_version": "1.0",
+  "total_records": 44,
+  "records": [
+    {
+      "record_ref": "M03",
+      "source_type": "meeting",
+      "source_id": "47a3e74a-d68a-5e26-bb42-b91c0e35fbb9",
+      "applied_revision": 1,
+      "route": "sales_pipeline",
+      "output_path": "sales_pipeline/M03_asterloom_systems_corporate_cards_&.md",
+      "processing_state": "complete",
+      "manual_override": false,
+      "has_usable_transcript": true
+    },
+    {
+      "record_ref": "M07",
+      "source_type": "meeting",
+      "source_id": "4f304fff-fd40-5cfc-a366-0a134c445c2a",
+      "applied_revision": 2,
+      "route": "customer_success",
+      "output_path": "customer_success/M07_willowfield_trust_bug_triage_(late_.md",
+      "processing_state": "complete",
+      "manual_override": false,
+      "has_usable_transcript": true
+    }
+    // ... 44 total manifest records
+  ]
+}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: 5 PRESENTATION SLIDES -->
+    <section id="tab-slides" class="tab-pane">
+      <div class="slides-wrapper">
+        <div class="slide-viewport">
+          <div>
+            <span class="slide-number-pill" id="slide-number">Slide 1 of 5</span>
+            <h2 class="slide-heading" id="slide-title">Loading Slide...</h2>
+            <div class="slide-subheading" id="slide-subtitle">Subheading</div>
+            <ul class="slide-bullet-list" id="slide-bullets"></ul>
+          </div>
+
+          <div class="slide-controls">
+            <button class="btn btn-secondary btn-sm" onclick="window.navigateSlide(-1)">
+              ← Previous Slide
+            </button>
+            <div class="slide-dots" id="slide-dots"></div>
+            <button class="btn btn-primary btn-sm" onclick="window.navigateSlide(1)">
+              Next Slide →
+            </button>
+          </div>
+        </div>
+        <div style="margin-top:14px; text-align:center; font-size:12px; color:var(--text-dim);">
+          Tip: You can also use Left/Right Arrow keys on your keyboard to navigate slides.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpendNest Revenue Intelligence — 5 Presentation Slides</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --accent: #2563eb;
+      --cyan: #0284c7;
+      --emerald: #059669;
+      --amber: #d97706;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    .deck-container {
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .top-bar a {
+      color: var(--cyan);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .slide {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 50px;
+      min-height: 580px;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .slide.active {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-badge {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--cyan);
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .content-grid {
+      display: grid;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .point-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .point-card strong {
+      color: #0f172a;
+    }
+
+    .point-card.emerald { border-left-color: var(--emerald); background: #f0fdf4; }
+    .point-card.amber { border-left-color: var(--amber); background: #fffbeb; }
+    .point-card.cyan { border-left-color: var(--cyan); background: #f0f9ff; }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .btn {
+      padding: 8px 18px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-family: inherit;
+    }
+
+    .btn-prev {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-prev:hover {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .btn-next {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .dot.active {
+      background: var(--accent);
+      width: 28px;
+      border-radius: 10px;
+    }
+
+    /* Print View */
+    @media print {
+      body { background: #fff; color: #000; padding: 0; }
+      .deck-container { max-width: 100%; }
+      .top-bar, .slide-footer, .tip { display: none !important; }
+      .slide {
+        display: flex !important;
+        background: #fff !important;
+        border: 1px solid #ccc !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        page-break-after: always;
+        min-height: auto;
+        padding: 40px;
+        margin-bottom: 20px;
+      }
+      .point-card { background: #f8fafc !important; color: #1e293b !important; }
+      .point-card strong { color: #0f172a !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <div class="top-bar">
+      <a href="index.html">← Back to Revenue Intelligence Inbox</a>
+      <span style="font-size:13px; color:var(--text-muted);">SpendNest Executive Presentation · 21 August 2026</span>
+    </div>
+
+    <!-- SLIDE 1 -->
+    <div class="slide active" id="slide-0">
+      <div>
+        <span class="slide-badge">Slide 1 of 5</span>
+        <h1>Manager Problem &amp; Three Key Findings</h1>
+        <div class="subtitle">Synthesizing fragmented sales evidence into reliable operational direction</div>
+
+        <div class="content-grid">
+          <div class="point-card">
+            <strong>The Manager Problem:</strong> A sales manager receives disorganized calls, meeting transcripts, and upstream automated flags. Stored labels frequently conflict with what people actually said, transcripts arrive late, and multi-purpose meetings obscure real deal pipeline.
+          </div>
+          <div class="point-card amber">
+            <strong>Finding 1 (Metadata vs Audio Mismatch):</strong> Call <code>C06</code> lists <code>rep_name: "Meera"</code>, but the caller speaks as: <em>"Good evening. Ravi here. I'll say at the start that this is a cold call."</em> (Quote, Call C06). <em>Product impact:</em> Alerted in the Executive Dashboard and attributed to "Meera (Spoken: Ravi)" to prevent misallocating coaching and outbound activity.
+          </div>
+          <div class="point-card cyan">
+            <strong>Finding 2 (Inverted Upstream Connection Labels):</strong> Upstream telephony flags conflict with reality. Call <code>C04</code> is labelled <code>is_connected: false</code> despite a complete 95s voicemail left for Ritesh. Conversely, calls <code>B11</code> &amp; <code>B14</code> are marked <code>is_connected: true</code> despite zero speech. <em>Product impact:</em> The dashboard separates stored connection rate (11/30 = 36.7%) from verified dialogue rate (10/10 = 100%).
+          </div>
+          <div class="point-card emerald">
+            <strong>Finding 3 (Commercial Misclassification):</strong> Meeting <code>M02</code> (<em>LedgerBridge</em>) appears to be a sales deal, but is SpendNest evaluating a 3rd-party vendor for e-invoicing (Turn 1: <em>"We want to understand whether LedgerBridge can give us compliant invoicing coverage"</em>). <em>Product impact:</em> Routed to Vendor Operations, removing it from pipeline currency totals.
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <button class="btn btn-prev" onclick="changeSlide(-1)">Previous</button>
+        <div class="dots" id="dots-container"></div>
+        <button class="btn btn-next" onclick="changeSlide(1)">Next Slide →</button>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide" id="slide-1">
+      <div>
+        <span class="slide-badge">Slide 2 of 5</span>
+        <h1>Interface Choices &amp; Deliberately Rejected Decision</h1>
+        <div class="subtitle">Designing for high-signal actionability while rejecting false precision</div>
+
+        <div class="content-grid">
+          <div class="point-card">
+            <strong>Connected Manager Workspace:</strong> Built a 3-tier progressive disclosure interface: Executive KPI Overview -> Filterable Drilldown Matrix -> Deep Conversation &amp; Citation Inspector.
+          </div>
+          <div class="point-card amber">
+            <strong>Deliberately Rejected Decision — Hallucinated Pipeline Revenue:</strong> We explicitly rejected synthesizing an automated "Pipeline Value" metric or rep revenue leaderboard from conversational figures (e.g. Customer B mentioning <em>"Monthly spending might be around INR 10–13 lakh, but that needs checking"</em> in <code>M03</code>).
+          </div>
+          <div class="point-card cyan">
+            <strong>Rationale &amp; Accepted Trade-off:</strong> The dataset contains no CRM opportunity table, discounting matrix, or verified credit underwriting. Domestic cards are prepaid wallets, meaning monthly spend is not SpendNest SaaS revenue. Displaying synthetic revenue figures provides false precision. We chose honest qualitative Opportunity Stages over misleading currency totals.
+          </div>
+          <div class="point-card emerald">
+            <strong>Deliberate Omissions:</strong> Omitted generic word clouds, automated sentiment gauges without citations, and forced account joins where company identifiers are unverified.
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <button class="btn btn-prev" onclick="changeSlide(-1)">Previous</button>
+        <div class="dots" id="dots-container-1"></div>
+        <button class="btn btn-next" onclick="changeSlide(1)">Next Slide →</button>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide" id="slide-2">
+      <div>
+        <span class="slide-badge">Slide 3 of 5</span>
+        <h1>Routing Architecture &amp; Edge Case Handling</h1>
+        <div class="subtitle">Differentiated operational taxonomy preserving human judgment</div>
+
+        <div class="content-grid">
+          <div class="point-card">
+            <strong>Differentiated Taxonomy:</strong> Replaced generic summaries with 6 distinct destination routes: <code>Sales Pipeline</code>, <code>Partnerships &amp; Advisory</code>, <code>Customer Success</code>, <code>Internal &amp; Vendor Operations</code>, <code>Lead Nurture</code>, and <code>Triage / Inactive</code>.
+          </div>
+          <div class="point-card cyan">
+            <strong>Context Preservation on Multi-Destination Records:</strong> A conversation can belong to multiple categories. E.g., <code>M04</code> (Cedarwave) routes to Customer Success for card migration, but flags an engineering blocker for user department reallocation. The export manifest maintains primary and secondary destinations.
+          </div>
+          <div class="point-card amber">
+            <strong>Difficult Case 1 — M02 (Vendor vs Prospect):</strong> Calendar title and attendee structure mimic a standard enterprise sales call. Context-aware routing inspects speaker roles to prevent inflating sales pipeline with procurement costs.
+          </div>
+          <div class="point-card emerald">
+            <strong>Difficult Case 2 — M07 (Late-Arriving Transcript):</strong> Delivered with empty turns in Batch 1; arrives with 27 turns in Batch 2. The system handles the update idempotently, marking analysis as freshly refreshed while preserving any manual route overrides made by the manager.
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <button class="btn btn-prev" onclick="changeSlide(-1)">Previous</button>
+        <div class="dots" id="dots-container-2"></div>
+        <button class="btn btn-next" onclick="changeSlide(1)">Next Slide →</button>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="slide" id="slide-3">
+      <div>
+        <span class="slide-badge">Slide 4 of 5</span>
+        <h1>Verification of Key Numbers &amp; Analytical Conclusions</h1>
+        <div class="subtitle">Mathematical rigor, explicit denominators, and transcript citations</div>
+
+        <div class="content-grid">
+          <div class="point-card">
+            <strong>Activity Denominator Invariant:</strong> Exactly 44 distinct source records (30 calls, 14 meetings) keyed strictly on <code>(source_type, source_id)</code>. Re-importing <code>01_initial.json</code> in shuffled order yields exactly 44 records (zero duplicates).
+          </div>
+          <div class="point-card emerald">
+            <strong>Transcript Coverage Verification:</strong> Initial: 17 / 44 (38.6%) -> Post-Update: 18 / 44 (40.9%). Calls coverage: 10 / 30 (33.3%). Meetings coverage: 7 / 14 (50.0%) -> 8 / 14 (57.1%).
+          </div>
+          <div class="point-card cyan">
+            <strong>Dual Connection Rate Calculation:</strong> Stored Telephony Rate: 11 / 30 = 36.7% (11 <code>is_connected=true</code> out of 30 calls). Verified Dialogue Rate: 10 / 10 = 100% (all 10 calls with transcripts featured active human conversation). Explicitly separating these numbers prevents misleading sales productivity reports.
+          </div>
+          <div class="point-card amber">
+            <strong>Traceable Analytical Citations:</strong> Every single coaching feedback and next-step recommendation cites an exact transcript passage and turn number (e.g. <code>M03</code> Turn 10 for spend estimate; <code>C03</code> Milan's follow-up request; <code>C07</code> Aditya's partnership confirmation).
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <button class="btn btn-prev" onclick="changeSlide(-1)">Previous</button>
+        <div class="dots" id="dots-container-3"></div>
+        <button class="btn btn-next" onclick="changeSlide(1)">Next Slide →</button>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 -->
+    <div class="slide" id="slide-4">
+      <div>
+        <span class="slide-badge">Slide 5 of 5</span>
+        <h1>Trade-offs, AI Usage, Limitations &amp; Roadmap</h1>
+        <div class="subtitle">Transparent technical disclosure and future production improvements</div>
+
+        <div class="content-grid">
+          <div class="point-card">
+            <strong>AI &amp; Automation Disclosure:</strong> AI was utilized to extract, cross-verify, and format conversational evidence, turning points, and coaching points. All outputs were subsequently audited against verbatim source turns to ensure zero hallucination.
+          </div>
+          <div class="point-card cyan">
+            <strong>Dynamic vs Pre-computed Logic:</strong> Ingestion, deduplication, revision comparison, route override persistence, filtering, and export manifest generation run dynamically in the client/runtime. Analytical summaries are pre-computed for deterministic review, with a visible "Needs Review" state on incoming updates.
+          </div>
+          <div class="point-card amber">
+            <strong>Known Limitations:</strong> 1) Extracted records represent a single shifted date (21 August 2026), precluding cross-week cohort trending. 2) No authenticated CRM or identity graph exists to confirm company corporate trees.
+          </div>
+          <div class="point-card emerald">
+            <strong>Next Production Enhancements:</strong> 1) Real-time webhook connector with automated re-indexing on revision arrival. 2) Interactive voice-memo coaching feedback for reps. 3) Native bi-directional sync with Salesforce / HubSpot.
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <button class="btn btn-prev" onclick="changeSlide(-1)">Previous</button>
+        <div class="dots" id="dots-container-4"></div>
+        <button class="btn btn-next" onclick="changeSlide(1)">Restart →</button>
+      </div>
+    </div>
+
+    <div class="tip" style="text-align:center; margin-top:16px; font-size:12px; color:var(--text-muted);">
+      Press Left / Right arrow keys to navigate slides. Press Ctrl/Cmd + P to print full deck as PDF.
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const totalSlides = 5;
+
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= totalSlides) index = 0;
+      currentSlide = index;
+
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+
+      renderDots();
+    }
+
+    function changeSlide(dir) {
+      showSlide(currentSlide + dir);
+    }
+
+    function renderDots() {
+      for (let i = 0; i < totalSlides; i++) {
+        const container = document.getElementById(i === 0 ? 'dots-container' : `dots-container-${i}`);
+        if (container) {
+          container.innerHTML = Array.from({ length: totalSlides }, (_, idx) => `
+            <div class="dot ${idx === currentSlide ? 'active' : ''}" onclick="showSlide(${idx})"></div>
+          `).join('');
+        }
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') changeSlide(1);
+      else if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    renderDots();
+  </script>
+</body>
+</html>
